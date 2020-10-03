@@ -16,6 +16,11 @@ const UserSchema = new mongoose.Schema({
         required: 'Email is required'
     },
 
+    about: {
+        type: String,
+        trim: true
+    },
+
     created: {
         type: Date,
         default: Date.now
