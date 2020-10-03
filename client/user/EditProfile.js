@@ -37,6 +37,7 @@ export default function EditProfile({ match }) {
         name: '',
         password: '',
         email: '',
+        about: '',
         open: false,
         error: '',
         redirectToProfile: false
@@ -52,7 +53,7 @@ export default function EditProfile({ match }) {
             if(data && data.error) {
                 setValues({...values, error: data.error})
             } else {
-                setValues({...values, name: data.name, email: data.email})
+                setValues({...values, name: data.name, email: data.email, about: data.about})
             }
         })
         return function cleanup() {
@@ -68,6 +69,7 @@ export default function EditProfile({ match }) {
         const user = {
             name: values.name || undefined,
             email: values.email || undefined,
+            about: values.about || undefined,
             password: values.password || undefined
         }
         update({userId: match.params.userId}, {t: jwt.token}, user).then((data) => {
@@ -90,7 +92,9 @@ export default function EditProfile({ match }) {
                     <Typography variant="h6" className={classes.title}>
                         Edit Profile
                     </Typography>
-                    
+
+                    <TextField id="multiline-flexible" label="About" className={classes.textField} multiline rows="2" value={values.about} onChange={handleChange('about')} />
+                    <br />                   
                     <TextField id="name" label="Name" className={classes.textField} value={values.name} onChange={handleChange('name')} margin="normal" />
                     <br />
                     <TextField id="email" type="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal" />
