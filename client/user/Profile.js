@@ -33,8 +33,11 @@ const useStyles = makeStyles(theme => ({
 
 export default function Profile({ match }) {
     const classes = useStyles()
-    const [user, setUser] = useState({})
-    const [redirectToSignin, setRedirectToSignin] = useState(false)
+    const [values, setValues] = useState({
+        user: {following: [], followers: []},
+        redirectToSignin: false,
+        following: false
+    })
 
     useEffect(() => {
         const abortController = new AbortController()
@@ -43,9 +46,9 @@ export default function Profile({ match }) {
 
         read({ userId: match.params.userId }, { t: jwt.token }, signal).then((data) => {
             if(data && data.error) {
-                setRedirectToSignin(true)
+                setValues({...values, redirectToSignin: true})
             } else {
-                setUser(data)
+                setValues({...values, user: data, /*following: following*/})
             }
         })
 
@@ -54,10 +57,11 @@ export default function Profile({ match }) {
         }
     }, [match.params.userId])
 
-    if(redirectToSignin) {
+    if(values.redirectToSignin) {
         return (<Redirect to='/signin' />)
     }
 
+    const photoUrl = values.user._id ? `/api/users/photo/${values.user._id}?${new Date().getTime()}` : '/api/users/defaultphoto'
     return (
         <Paper className={classes.root} elevation={4}>
             <Typography variant="h6" className={classes.title}>
@@ -67,29 +71,27 @@ export default function Profile({ match }) {
             <List dense>
                 <ListItem>
                 <ListItemAvatar>
-                        <Avatar>
-                            <Person />
-                        </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={user.name} secondary={user.email} />
+                    <Avatar src={photoUrl} />
+                </ListItemAvatar>
+                    <ListItemText primary={values.user.name} secondary={values.user.email} />
 
-                    { auth.isAuthenticated().user && auth.isAuthenticated().user._id == user._id && 
+                    { auth.isAuthenticated().user && auth.isAuthenticated().user._id == values.user._id && 
                         (<ListItemSecondaryAction>
-                            <Link to={"/user/edit/" + user._id}>
+                            <Link to={"/user/edit/" + values.user._id}>
                                 <IconButton aria-label="Edit" color="primary">
                                     <Edit />
                                 </IconButton>
                             </Link>
-                            <DeleteUser userId={user._id} />
+                            <DeleteUser userId={values.user._id} />
                         </ListItemSecondaryAction>)}
                 </ListItem>
                 <Divider />
                 <ListItem>
-                    <ListItemText primary={`About me: ${user.about}`}/>
+                    <ListItemText primary={`About me: ${values.user.about}`}/>
                 </ListItem>
                 <Divider />
                 <ListItem>
-                    <ListItemText primary={"Joined: " + (new Date(user.created)).toDateString()} />
+                    <ListItemText primary={"Joined: " + (new Date(values.user.created)).toDateString()} />
                 </ListItem>
             </List>
         </Paper>
