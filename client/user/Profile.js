@@ -10,12 +10,12 @@ import Avatar from '@material-ui/core/Avatar'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
 import Edit from '@material-ui/icons/Edit'
-import Person from '@material-ui/icons/Person'
 import Divider from '@material-ui/core/Divider'
 import DeleteUser from './DeleteUser'
 import auth from './../auth/auth-helper'
 import {read} from './api-user.js'
 import {Redirect, Link} from 'react-router-dom'
+import FollowProfileButton from './FollowProfileButton'
 
 
 const useStyles = makeStyles(theme => ({
@@ -39,16 +39,18 @@ export default function Profile({ match }) {
         following: false
     })
 
+    const jwt = auth.isAuthenticated()
+
     useEffect(() => {
         const abortController = new AbortController()
         const signal = abortController.signal
-        const jwt = auth.isAuthenticated()
 
         read({ userId: match.params.userId }, { t: jwt.token }, signal).then((data) => {
             if(data && data.error) {
                 setValues({...values, redirectToSignin: true})
             } else {
-                setValues({...values, user: data, /*following: following*/})
+                let following = checkFollow(data)
+                setValues({...values, user: data, following: following})
             }
         })
 
@@ -59,6 +61,23 @@ export default function Profile({ match }) {
 
     if(values.redirectToSignin) {
         return (<Redirect to='/signin' />)
+    }
+
+    const checkFollow = (user) => {
+        const match = user.followers.some((follower) => {
+            return follower._id == jwt.user._id
+        })
+        return match
+    }
+
+    const clickFollowButton = (callApi) => {
+        callApi({ userId: jwt.user._id }, { t: jwt.token }, values.user._id).then((data) => {
+            if(data.error) {
+                setValues({...values, error: data.error})
+            } else {
+                setValues({...values, user: data, following: !values.following})
+            }
+        })
     }
 
     const photoUrl = values.user._id ? `/api/users/photo/${values.user._id}?${new Date().getTime()}` : '/api/users/defaultphoto'
@@ -75,15 +94,18 @@ export default function Profile({ match }) {
                 </ListItemAvatar>
                     <ListItemText primary={values.user.name} secondary={values.user.email} />
 
-                    { auth.isAuthenticated().user && auth.isAuthenticated().user._id == values.user._id && 
-                        (<ListItemSecondaryAction>
+                    { auth.isAuthenticated().user && auth.isAuthenticated().user._id == values.user._id
+                        
+                        ?(<ListItemSecondaryAction>
                             <Link to={"/user/edit/" + values.user._id}>
                                 <IconButton aria-label="Edit" color="primary">
                                     <Edit />
                                 </IconButton>
                             </Link>
                             <DeleteUser userId={values.user._id} />
-                        </ListItemSecondaryAction>)}
+                        </ListItemSecondaryAction>)
+                        
+                    : (<FollowProfileButton following={values.following} onButtonClick={clickFollowButton}/>)}
                 </ListItem>
                 <Divider />
                 <ListItem>
