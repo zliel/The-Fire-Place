@@ -16,6 +16,7 @@ import auth from './../auth/auth-helper'
 import {read} from './api-user.js'
 import {Redirect, Link} from 'react-router-dom'
 import FollowProfileButton from './FollowProfileButton'
+import FollowGrid from './FollowGrid'
 
 
 const useStyles = makeStyles(theme => ({
@@ -116,6 +117,9 @@ export default function Profile({ match }) {
                     <ListItemText primary={"Joined: " + (new Date(values.user.created)).toDateString()} />
                 </ListItem>
             </List>
+            <FollowGrid people={values.user.following} />
+            <FollowGrid people={values.user.followers} />
+            {/*TO DO: MAKE TABS FOR THESE COMPONENTS TO GO INTO*/}
         </Paper>
     )
 }
