@@ -6,6 +6,7 @@ import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import javascriptLogo from './../assets/images/javascriptLogo.jpg'
+import FindPeople from '../user/FindPeople'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -28,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 export default function Home() {
     const classes = useStyles()
     return (
+        <div>
         <Card className={classes.card}>
             <Typography variant="h6" className={classes.title} style={{background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%'}}>
                 Home Page
@@ -37,9 +39,15 @@ export default function Home() {
             
             <CardContent>
                 <Typography variant="body2" component="p">
-                    Welcome to the homepage of my MERN Skeleton!
+                    Welcome to The Fireplace!
                 </Typography>
             </CardContent>
         </Card>
+        <Card className={classes.card}>
+            <CardContent>
+                <FindPeople />
+            </CardContent>
+        </Card>
+        </div>
     )
 }
