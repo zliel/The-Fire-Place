@@ -16,7 +16,7 @@ import auth from './../auth/auth-helper'
 import {read} from './api-user.js'
 import {Redirect, Link} from 'react-router-dom'
 import FollowProfileButton from './FollowProfileButton'
-import FollowGrid from './FollowGrid'
+import FollowTabs from './FollowTabs'
 
 
 const useStyles = makeStyles(theme => ({
@@ -109,17 +109,13 @@ export default function Profile({ match }) {
                     : (<FollowProfileButton following={values.following} onButtonClick={clickFollowButton}/>)}
                 </ListItem>
                 <Divider />
+
                 <ListItem>
-                    <ListItemText primary={`About me: ${values.user.about}`}/>
-                </ListItem>
-                <Divider />
-                <ListItem>
-                    <ListItemText primary={"Joined: " + (new Date(values.user.created)).toDateString()} />
+                    <ListItemText primary={values.user.about && `About me: ${values.user.about}`} secondary={"Joined: " + (new Date(values.user.created)).toDateString()} />
                 </ListItem>
             </List>
-            <FollowGrid people={values.user.following} />
-            <FollowGrid people={values.user.followers} />
-            {/*TO DO: MAKE TABS FOR THESE COMPONENTS TO GO INTO*/}
+            <FollowTabs user={values.user}/>
+            {/*(COMPLETE) TO DO: MAKE TABS FOR THESE COMPONENTS TO GO INTO*/}
         </Paper>
     )
 }
