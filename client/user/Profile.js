@@ -14,9 +14,10 @@ import Divider from '@material-ui/core/Divider'
 import DeleteUser from './DeleteUser'
 import auth from './../auth/auth-helper'
 import {read} from './api-user.js'
+import {listByUser} from '../post/api-post'
 import {Redirect, Link} from 'react-router-dom'
 import FollowProfileButton from './FollowProfileButton'
-import FollowTabs from './FollowTabs'
+import ProfileInfoTabs from './ProfileInfoTabs'
 
 
 const useStyles = makeStyles(theme => ({
@@ -24,7 +25,8 @@ const useStyles = makeStyles(theme => ({
         maxWidth: 600,
         margin: 'auto',
         padding: theme.spacing(3),
-        marginTop: theme.spacing(5)
+        marginTop: theme.spacing(5),
+        height: 'auto'
     }),
     title: {
         marginTop: theme.spacing(3),
@@ -39,7 +41,7 @@ export default function Profile({ match }) {
         redirectToSignin: false,
         following: false
     })
-
+    const [posts, setPosts] = useState([])
     const jwt = auth.isAuthenticated()
 
     useEffect(() => {
@@ -52,6 +54,7 @@ export default function Profile({ match }) {
             } else {
                 let following = checkFollow(data)
                 setValues({...values, user: data, following: following})
+                loadPosts(data._id)
             }
         })
 
@@ -77,8 +80,26 @@ export default function Profile({ match }) {
                 setValues({...values, error: data.error})
             } else {
                 setValues({...values, user: data, following: !values.following})
+                loadPosts(data._id)
             }
         })
+    }
+
+    const loadPosts = (user) => {
+        listByUser({userId: user}, { t: jwt.token }).then((data) => {
+            if (data.error) {
+                console.log(data)
+            } else {
+                setPosts(data)
+            }
+        })
+    }
+
+    const removePost = (post) => {
+        const updatedPosts = posts
+        const index = updatedPosts.indexOf(post)
+        updatedPosts.splice(index, 1)
+        setPosts(updatedPosts)
     }
 
     const photoUrl = values.user._id ? `/api/users/photo/${values.user._id}?${new Date().getTime()}` : '/api/users/defaultphoto'
@@ -113,8 +134,12 @@ export default function Profile({ match }) {
                 <ListItem>
                     <ListItemText primary={values.user.about && `About me: ${values.user.about}`} secondary={"Joined: " + (new Date(values.user.created)).toDateString()} />
                 </ListItem>
+
+                <ListItem>
+                <ProfileInfoTabs user={values.user} removePostUpdate={removePost} posts={posts}/>
+                </ListItem>
             </List>
-            <FollowTabs user={values.user}/>
+            
             {/*(COMPLETE) TO DO: MAKE TABS FOR THESE COMPONENTS TO GO INTO*/}
         </Paper>
     )
