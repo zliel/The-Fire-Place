@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Tabs, Tab, Typography, Box, makeStyles } from '@material-ui/core'
 import FollowGrid from './FollowGrid'
+import PostList from './../post/PostList'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props
@@ -9,7 +10,7 @@ function TabPanel(props) {
     return (
         <div role="tabpanel" hidden={value !== index} id={`vertical-tabpanel-${index}`} aria-labelledby={`vertical-tab-${index}`} {...other}>
             {value === index && (
-                <Box p={3}>
+                <Box p={3} >
                     {children}
                 </Box>
             )}
@@ -34,15 +35,15 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
-        height: 224,
-
+        height: 'auto',
+        // 'auto' height was used to fix the posts overflowing out of the paper component on the profile page
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`
     }
 }), {name: "MuiFollowTabsComponent"})
 
-export default function FollowTabs(props) {
+export default function ProfileInfoTabs(props) {
     const classes = useStyles()
     const [value, setValue] = useState(0)
 
@@ -50,6 +51,9 @@ export default function FollowTabs(props) {
         setValue(newValue)
     }
 
+    const changeHeight = useEffect(() => {
+
+    })
     return (
         <div className={classes.root}>
             <Tabs orientation="vertical"
@@ -60,6 +64,7 @@ export default function FollowTabs(props) {
             >
                 <Tab label="Following" {...tabPanelProps(0)} />
                 <Tab label="Followers" {...tabPanelProps(1)} />
+                <Tab label="Posts" {...tabPanelProps(2)} />
             </Tabs>
                 
             <TabPanel value={value} index={0}>
@@ -68,12 +73,17 @@ export default function FollowTabs(props) {
             <TabPanel value={value} index={1}>
                 <FollowGrid people={props.user.followers} />
             </TabPanel>
+            <TabPanel value={value} index={2}>
+                <PostList removeUpdate={props.removePostUpdate} posts={props.posts} />
+            </TabPanel>
         </div>
     )
 }
 
-FollowTabs.propTypes = {
-    user: PropTypes.object.isRequired
+ProfileInfoTabs.propTypes = {
+    user: PropTypes.object.isRequired,
+    removePostUpdate: PropTypes.func.isRequired,
+    posts: PropTypes.array.isRequired
 }
 
 /* TO DO: 
@@ -81,5 +91,6 @@ FollowTabs.propTypes = {
 Override button colors to match theme
 Find good username text color
 Find some kind of animation?
+    Maybe using react-transition-group?
 
 */
