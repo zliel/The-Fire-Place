@@ -1,5 +1,14 @@
 import mongoose from 'mongoose'
 
+/*
+We define the Schema for the Posts in our database
+    text: the text of the post
+    photo: if the user adds a photo to the post, it will be stored as binary
+    postedBy: the ID of the user who posted the post
+    created: the date the post was created
+    likes: an array containing the IDs of the users who have liked the post in question
+    comments: an array containing the text of the comment, when it was created, and who commented
+*/
 const PostSchema = mongoose.Schema({
     text: {
         type: String,

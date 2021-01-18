@@ -1,6 +1,17 @@
 import mongoose from 'mongoose'
 import crypto from 'crypto'
 
+/*
+We define the schema for Users in the database here:
+    name: the name of the user
+    email: the email of the user
+    about: a short description the user can show on their profile
+    photo: the user's profile photo, stored as binary
+    created: the date the user was created
+    hashed_password: their password, after being put through a hash function
+    following: an array of the IDs of users who the user follows
+    followers: an array of the IDs of the users who follow the user
+*/
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -43,6 +54,7 @@ const UserSchema = new mongoose.Schema({
     followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}]
  })
 
+ // Create a virtual schema for the user's password, salt, and hashed_password
  UserSchema.virtual('password')
            .set(function(password) {
                this._password = password
@@ -53,6 +65,7 @@ const UserSchema = new mongoose.Schema({
                return this._password
            })
 
+// We add a path for the hashed_password to validate the password upon creation
 UserSchema.path('hashed_password').validate(function(v) {
     if(this._password && this._password.length < 6) {
         this.invalidate('password', 'Password must be at least 6 characters.')
@@ -62,10 +75,14 @@ UserSchema.path('hashed_password').validate(function(v) {
     }
 }, null)
 
+// Here we define the methods attached to the schema
 UserSchema.methods = {
+    // this method authenticates the user input for the user's password
     authenticate: function(plainText) {
         return this.encryptPassword(plainText) === this.hashed_password
     },
+
+    // this method encrypts the user's input to be used in the authenticate() function
     encryptPassword: function(password) {
         if(!password) return ''
         try {
@@ -76,6 +93,7 @@ UserSchema.methods = {
             return ''
         }
     },
+    // this method creates a salt to be used in the encryptPassword() function
     makeSalt: function() {
         return Math.round((new Date().valueOf() * Math.random())) + ''
     }
