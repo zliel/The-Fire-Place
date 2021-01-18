@@ -3,8 +3,11 @@ import userCtrl from '../controllers/user.controller'
 import authCtrl from '../controllers/auth.controller'
 
 //Be careful about the order in which routes are placed in this file
+// Create our router object
 const router = express.Router()
 
+// Add our routes to the router, handling routes with their associated functions
+// If we require the user to be signed in for a route, we'll pass along the authCtrl.requireSignIn function as well
 router.route('/api/users')
       .get(userCtrl.list)
       .post(userCtrl.create)
@@ -29,7 +32,7 @@ router.route('/api/users/photo/:userId')
 router.route('/api/users/findpeople/:userId')
       .get(authCtrl.requireSignin, userCtrl.findPeople)
 
-
+// Handle the param to be passed into the route
 router.param('userId', userCtrl.userByID)
 
 

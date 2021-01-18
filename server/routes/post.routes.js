@@ -3,8 +3,10 @@ import authCtrl from '../controllers/auth.controller'
 import userCtrl from '../controllers/user.controller'
 import postCtrl from '../controllers/post.controller'
 
+// Create our router object
 const router = express.Router()
 
+// Add all of our routes to our router, handling each route with their associated functions.
 router.route('/api/posts/like')
       .put(authCtrl.requireSignin, postCtrl.like)
 
@@ -32,6 +34,7 @@ router.route('/api/posts/photo/:postId')
 router.route('/api/posts/:postId')
       .delete(authCtrl.requireSignin, postCtrl.isPoster, postCtrl.remove)
 
+// Handle parameters in the last two routess
 router.param('userId', userCtrl.userByID)
 router.param('postId', postCtrl.postById)
 
