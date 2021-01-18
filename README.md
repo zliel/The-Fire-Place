@@ -1,13 +1,18 @@
-# Full-Stack-App-Skeleton
-#### This is a Full Stack MERN Skeleton that includes User CRUD and Auth functionality
-### Technologies used: 
- - MERN Stack (MongoDB/Mongoose, Express, ReactJS, NodeJS)
- - React-Router
- - Material-UI
+# The Fire place
+This is a full-stack social media application from Shama Hoque's book "Full Stack React Projects" (Second Edition). 
+<br><br>
+***Note***: In her book, she calls it "MERN Social", and I want to make sure I give her proper credit. I'm just making changes to it to learn and get some experience working with a larger codebase
 
-### How to Start
- - After cloning, run "npm install" to install the necessary dependencies
- - Make sure to create a dotenv file to store your environment variables! 
- - To run during development, uncomment lines 11 and 25 in server/express.js file. Then use the command "npm run development" to start the app
- - To build, comment out lines 11 and 25 in server/express.js and use the command "npm run build"
- - After building, the app can be starting by using the command "npm run start"
+### Features 
+ - CRUD and Auth functionality
+ - Following users
+ - Posting, liking posts, and commenting on posts
+ 
+### Technologies used: 
+ - Front-end:
+   - React (as well as React-Router for links and redirects)
+   - Material-UI
+ - Back-end:
+   - NodeJS
+   - Express
+   - MongoDB/Mongoose
