@@ -22,8 +22,11 @@ import MainRouter from './../client/MainRouter'
 import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles'
 import theme from './../client/theme' 
 
+// Create our express app
 const app = express()
 //devBundle.compile(app) //Remove these before sending them out
+
+// Add all of the things our app needs to what it uses
 require('dotenv').config()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true}))
@@ -33,9 +36,12 @@ app.use(helmet())
 app.use(cors())
 app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 
+// Add our routes to our app
 app.use('/', userRoutes)
 app.use('/', authRoutes)
 app.use('/', postRoutes)
+
+// Handle 400 and 401 errors
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') { 
         res.status(401).json({ error: `${err.name}: ${err.message}` })
@@ -44,9 +50,12 @@ app.use((err, req, res, next) => {
     }
 })
 
+// Implement server-side rendering
 app.get('*', (req, res) => {
+    // Collect our style sheets for our pages
     const sheets = new ServerStyleSheets()
     const context = {}
+    // Generate our markup for our page 
     const markup = ReactDOMServer.renderToString(
         sheets.collect(
             <StaticRouter location={req.url} context={context}>
@@ -58,6 +67,7 @@ app.get('*', (req, res) => {
     )
 
     const css = sheets.toString()
+    // If the connection to the page is a success, generate the file from template.js to be displayes
     res.status(200).send(Template({
         markup: markup,
         css: css

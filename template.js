@@ -1,3 +1,4 @@
+// This file takes the markup and css created in express.js, and generates the HTML to be displayed on the page
 export default ({markup, css}) => {
     return `<!doctype html>
         <html lang="en">
@@ -7,8 +8,8 @@ export default ({markup, css}) => {
                 <style id="jss-server-side">${css}</style>
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400">
                 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
- 
             </head>
+
             <body>
                 <div id="root">${markup}</div>
                 
