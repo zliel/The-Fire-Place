@@ -1,3 +1,4 @@
+// This function sends a message in the case of mongoose throwing an error
 const getErrorMessage = (err) => {
     let message = ''
     if(err.code) {
@@ -17,6 +18,7 @@ const getErrorMessage = (err) => {
     return message;
 }
 
+// This function retrieves the error message if mongoose throws an error, to be used in the getErrorMessage() function
 const getUniqueErrorMessage = (err) => {
     let output
     try {
